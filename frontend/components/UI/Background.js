@@ -11,7 +11,7 @@ const Background = ({ children, BG, paddingTop, marginTop }) => {
       resizeMode="cover"
       style={{
         ...styles.container,
-        paddingTop: paddingTop || windowHeight / 4,
+        paddingTop: paddingTop || 0,
         marginTop: marginTop || 0,
       }}
       blurRadius={1.5}

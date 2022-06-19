@@ -3,7 +3,7 @@ import { View, TextInput, StyleSheet } from 'react-native';
 import { windowHeight, windowWidth } from '../../Dimensions';
 // import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const Input = ({ width, height, contrast, fontSize, labelValue, placeholderText, iconType, ...rest }) => {
+const Input = ({ width, height, contrast, fontSize, labelValue, placeholderText, iconType, children, ...rest }) => {
   return (
     <View style={{
       ...styles.inputContainer,
@@ -11,9 +11,7 @@ const Input = ({ width, height, contrast, fontSize, labelValue, placeholderText,
       height: height || windowHeight / 15,
       backgroundColor: contrast ? 'black' : 'white',
     }}>
-      {/* <View style={styles.iconStyle}>
-        <AntDesign name={iconType} size={20} color="#666" />
-      </View> */}
+      {children}
       <TextInput
         value={labelValue}
         style={{
