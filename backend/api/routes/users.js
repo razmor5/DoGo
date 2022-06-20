@@ -9,11 +9,13 @@ const {
   addDog,
   isUserExists,
   changeUserID,
+  getUsersDogs,
 } = require("../controllers/users");
 
 router.post("/sign-up", createNewUser);
 router.post("/add-dog", addDog);
 router.get("/exists", isUserExists);
+router.get("/:userID/dogs", getUsersDogs);
 router.get("/:gardenID", getUsersAtGarden);
 router.post("/:gardenID", assignUserToGarden);
 router.delete("/:gardenID", deleteUserFromGarden);
