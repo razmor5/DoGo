@@ -2,7 +2,7 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import PersonalInformationScreen from '../screens/PersonalInformationScreen';
+import MapScreen from '../screens/MapScreen';
 
 const HomeStack = createNativeStackNavigator()
 const MyTheme = {
@@ -16,10 +16,10 @@ const MyTheme = {
 const HomeNavigator = () => {
   return (
     <NavigationContainer theme={MyTheme}>
-      <HomeStack.Navigator initialRouteName="Personal Info" screenOptions={{
+      <HomeStack.Navigator initialRouteName="Map" screenOptions={{
         headerShown: false
       }}>
-        <HomeStack.Screen name="Personal Info" component={PersonalInformationScreen} />
+        <HomeStack.Screen name="Map" component={MapScreen} />
         {/* <AppStack.Screen name="Register" component={Register} /> */}
         {/* <AppStack.Screen name="ForgotPassword" component={ForgotPassword} /> */}
 

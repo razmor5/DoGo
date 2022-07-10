@@ -6,31 +6,103 @@ import Input from '../UI/Input'
 import Button from '../UI/Button'
 import firebase from 'firebase';
 
-const PersonalInformationScreen = () => {
+const PersonalInformationScreen = ({ route }) => {
+  const [name, setName] = useState("")
+  const [nameValid, setNameValid] = useState(true)
+  const [dogName, setDogName] = useState("")
+  const [dogNameValid, setDogNameValid] = useState(true)
+  const [dogBreed, setDogBreed] = useState("")
+  const [dogBreedValid, setDogBreedValid] = useState(true)
   const [gender, setGender] = useState("")
+  const [genderValid, setGenderValid] = useState(true)
+  const barkPressedRegister = () => {
+    let valid = true
+    if (name === "") {
+      valid = false
+      setNameValid(false)
+    }
+    if (dogName === "") {
+      valid = false
+      setDogNameValid(false)
+    }
+    if (dogBreed === "") {
+      valid = false
+      setDogBreedValid(false)
+    }
+    if (gender === "") {
+      valid = false
+      setGenderValid(false)
+    }
+    if (valid) {
+      firebase.auth().createUserWithEmailAndPassword(route.params.email, route.params.password)
+        .then((userCredential) => {
+          console.log(userCredential)
+          //TODO: dispatch the userCredential.user.uid to mongo with all details needed
+        })
+        .catch((error) => {
+          Alert.alert(
+            "Something Went Wrong...",
+            error.message,
+          )
+        })
+      console.log(route.params)
+    }
+  }
   return (
     <ScrollView style={styles.container}>
       <Header contrast fontSize={windowHeight * 0.05}>Who are you?</Header>
       <View style={styles.wrapper}>
-        <Input placeholderText="Name..." />
+        <Input
+          labelValue={name}
+          onChangeText={input => {
+            setName(input)
+            setNameValid(true)
+          }}
+          unvalid={!nameValid}
+          placeholderText="Name..."
+        />
       </View>
       <Header contrast fontSize={windowHeight * 0.05}>And your best friend?</Header>
       <View style={styles.wrapper}>
-        <Input placeholderText="Your Dog's Name..." />
-        <Input placeholderText="Your Dog's Breed..." />
+        <Input
+          labelValue={dogName}
+          onChangeText={input => {
+            setDogName(input)
+            setDogNameValid(true)
+          }}
+          unvalid={!dogNameValid}
+          placeholderText="Your Dog's Name..."
+        />
+        <Input
+          labelValue={dogBreed}
+          onChangeText={input => {
+            setDogBreed(input)
+            setDogBreedValid(true)
+          }}
+          unvalid={!dogBreedValid}
+
+          placeholderText="Your Dog's Breed..."
+        />
         <View style={styles.lineWrapper}>
           <Button
             contrast={gender === "male"}
             title="Male"
             width={windowWidth * 0.4}
-            onPress={() => { setGender("male") }}
+            onPress={() => {
+              setGender("male")
+              setGenderValid(true)
+            }}
+            unvalid={!genderValid}
           />
           <Button
             contrast={gender === "female"}
             title="Female"
             width={windowWidth * 0.4}
-            onPress={() => { setGender("female") }}
-
+            onPress={() => {
+              setGender("female")
+              setGenderValid(true)
+            }}
+            unvalid={!genderValid}
           />
         </View>
         {/* <Picker>
@@ -39,7 +111,7 @@ const PersonalInformationScreen = () => {
           <Picker.item label="Female" value="female" />
         </Picker> */}
         {/* <Input placeholderText="Your Dog'sGender..." /> */}
-        <Button contrast title="BARK" onPress={() => { firebase.auth().signOut() }} />
+        <Button contrast title="BARK" onPress={barkPressedRegister} />
       </View>
     </ScrollView>
   )

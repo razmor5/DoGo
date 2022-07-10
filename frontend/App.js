@@ -11,6 +11,7 @@ import PersonalInformationScreen from './components/screens/PersonalInformationS
 import firebase from 'firebase';
 import Loading from './components/screens/Loading';
 import HomeNavigator from './components/navigators/HomeNavigator';
+import AuthNavigator from './components/navigators/AuthNavigator';
 
 const getFonts = async () => Font.loadAsync({
   'Comfortaa-Regular': require('./assets/fonts/Comfortaa-Regular.ttf'),
@@ -61,7 +62,7 @@ export default function App() {
         {isLoggedIn ?
           <HomeNavigator />
           :
-          <LoginScreen />
+          <AuthNavigator />
         }
       </Background >
 

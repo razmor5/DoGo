@@ -8,31 +8,48 @@ import Button from '../UI/Button'
 import Entypo from 'react-native-vector-icons/Entypo';
 import firebase from 'firebase';
 
-const EmailAndPass = () => {
+const EmailAndPass = (props) => {
   const [email, setEmail] = useState('')
+  const [emailValid, setEmailValid] = useState(true)
   const [password, setPassword] = useState('')
+  const [passwordValid, setPasswordValid] = useState(true)
   const [hidePassword, setHidePassword] = useState(true)
 
   const onLogIn = () => {
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        console.log(userCredential)
-        // this.props.navigation.navigate('Home');
-      })
-      .catch((error) => {
-        Alert.alert(
-          "Oopsy",
-          "Please recheck your details or join as a new member!",
-          [
-            {
-              text: "Register",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            },
-            { text: "Try Again" }
-          ]
-        )
-      })
+    let valid = true
+    if (email === "") {
+      valid = false
+      setEmailValid(false)
+    }
+    if (password === "") {
+      valid = false
+      setPasswordValid(false)
+    }
+    if (valid) {
+
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          console.log(userCredential)
+          // this.props.navigation.navigate('Home');
+        })
+        .catch((error) => {
+          Alert.alert(
+            "Oopsy",
+            "Please recheck your details or join as a new member!",
+            [
+              {
+                text: "Register",
+                onPress: () => props.navigation.navigate('PersonalInformation', { email: email, password: password }),
+                style: "cancel"
+              },
+              {
+                text: "Try Again",
+                onPress: () => console.log("Cancel Pressed")
+              }
+            ]
+          )
+        })
+    }
     // firebase.auth().signInAnonymously()
     //   .then((userCredential) => {
     //     console.log(userCredential)
@@ -65,18 +82,28 @@ const EmailAndPass = () => {
       {/* <View style={styles.lineWrapper}> */}
       <Input
         labelValue={email}
-        onChangeText={input => setEmail(input)}
+        onChangeText={input => {
+          setEmail(input)
+          setEmailValid(true)
+        }}
         keyboardType='email-address'
         width={windowWidth * 0.8}
         placeholderText="Email"
+        unvalid={!emailValid}
       />
       <Input
         labelValue={password}
-        onChangeText={input => setPassword(input)}
+        onChangeText={input => {
+          setPassword(input)
+          setPasswordValid(true)
+        }}
         // keyboardType='visible-password'
         width={windowWidth * 0.8}
         secureTextEntry={hidePassword}
-        placeholderText="Password">
+        placeholderText="Password"
+        unvalid={!passwordValid}
+      >
+
         <TouchableOpacity
           style={styles.iconStyle}
           onPress={() => {
@@ -87,7 +114,7 @@ const EmailAndPass = () => {
         </TouchableOpacity>
       </Input>
       {/* </View> */}
-      <Button onPress={onLogIn} title="LOG IN" width={windowWidth * 0.4} />
+      <Button onPress={onLogIn} title="SIGN IN/UP" width={windowWidth * 0.4} />
     </View>
   )
 }
@@ -98,6 +125,7 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
+    marginTop: windowHeight * 0.1,
   },
   iconStyle: {
     padding: 10,

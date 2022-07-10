@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Alert } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { windowHeight, windowWidth } from '../../Dimensions'
 import Logo from '../UI/Logo'
 import Header from '../UI/Header'
@@ -11,6 +11,11 @@ import Loading from './Loading'
 const LoginScreen = () => {
   const [countryCode, setCountryCode] = useState('')
   const [phoneNumber, setPhoneNumber] = useState('')
+  const [confirm, setConfirm] = useState(null);
+  const [code, setCode] = useState('')
+  const [verificationId, setVerificationId] = useState(null)
+  const recaptchaVerifier = useRef(null)
+
 
   const isPhoneValid = () => {
     return (
@@ -19,24 +24,37 @@ const LoginScreen = () => {
     )
   }
 
-  const onPressHandler = () => {
+  const onPressHandler = async () => {
     if (isPhoneValid()) {
+      // firebase.auth().useDeviceLanguage()
 
-      firebase.auth().signInAnonymously()
-        .then((userCredential) => {
-          console.log(userCredential)
-          console.log(countryCode + (parseInt(phoneNumber)).toString())
-          // this.props.navigation.navigate('Home');
-        })
-        .catch((error) => {
-          Alert.alert(
-            "Oopsy",
-            "Please recheck your phone number",
-            [
-              { text: "OK" }
-            ]
-          )
-        })
+      // var appVerifier = new firebase.auth.RecaptchaVerifier('recaptchaVerifier');
+      const confirmation = await firebase.auth().signInWithPhoneNumber(phoneNumber);
+      setConfirm(confirmation);
+
+      // const phoneProvider = new firebase.auth.PhoneAuthProvider();
+      // phoneProvider.verifyPhoneNumber(countryCode + (parseInt(phoneNumber)).toString(), recaptchaVerifier.current)
+      //   .then(setVerificationId);
+      // setPhoneNumber('')
+      // setCountryCode('')
+
+
+
+      // firebase.auth().signInAnonymously()
+      //   .then((userCredential) => {
+      //     console.log(userCredential)
+      //     console.log(countryCode + (parseInt(phoneNumber)).toString())
+      //     // this.props.navigation.navigate('Home');
+      //   })
+      //   .catch((error) => {
+      //     Alert.alert(
+      //       "Oopsy",
+      //       "Please recheck your phone number",
+      //       [
+      //         { text: "OK" }
+      //       ]
+      //     )
+      //   })
     }
     else {
       Alert.alert(
@@ -50,7 +68,7 @@ const LoginScreen = () => {
   }
   return (
     <View style={styles.container}>
-      {/* <Loading /> */}
+
       <View style={styles.lineWrapper}>
         <Logo />
         <Header bold>DoGo</Header>

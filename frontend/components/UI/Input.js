@@ -3,7 +3,7 @@ import { View, TextInput, StyleSheet } from 'react-native';
 import { windowHeight, windowWidth } from '../../Dimensions';
 // import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const Input = ({ width, height, contrast, fontSize, labelValue, placeholderText, iconType, children, ...rest }) => {
+const Input = ({ width, height, contrast, fontSize, labelValue, placeholderText, iconType, children, unvalid, ...rest }) => {
   return (
     <View style={{
       ...styles.inputContainer,
@@ -19,6 +19,8 @@ const Input = ({ width, height, contrast, fontSize, labelValue, placeholderText,
           styles.input,
           color: contrast ? 'white' : 'black',
           fontSize: fontSize || windowHeight * 0.02,
+          borderWidth: unvalid ? 2 : 0,
+          borderColor: unvalid ? 'red' : 'black'
 
         }}
         numberOfLines={1}
