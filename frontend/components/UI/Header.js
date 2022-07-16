@@ -19,6 +19,7 @@ const Header = ({ fontSize, contrast, bold, children }) => {
 const styles = StyleSheet.create({
   headerContainer: {
     marginTop: (windowHeight * 0.15) / 4,
+    // alignItems: 'center',
 
   },
 
