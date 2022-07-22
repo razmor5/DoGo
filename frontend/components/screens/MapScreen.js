@@ -11,25 +11,29 @@ import * as Location from 'expo-location';
 import CustomMarker from '../UI/CustomMarker';
 import GardenInformation from '../UI/GardenInformation';
 
-const MapScreen = () => {
+const MapScreen = (props) => {
 
   const [mapRegion, setmapRegion] = useState(null);
   const [myLocationButton, setMyLocationButton] = useState(false);
   const [status, setStatus] = useState('')
   const [location, setLocation] = useState(null);
-  const [gardens, setGardens] = useState([
-    {
-      id: 0,
-      address: 'ד"ר ראובן הכט 37-11, באר שבע',
-      coords: {
-        latitude: 31.274989,
-        longitude: 34.818367
-      },
-      description: "גינה יפה ומטופחת, יש ספסלים וברזייה קרובה ונקי שם מאוד",
-      pressed: false,
-      amount: 21,
+  const [gardens, setGardens] = useState([]);
+  const [splitScreen, setSplitScreen] = useState(false);
+
+  const fetchGardens = async () => {
+    const res = require('../../db.json')
+    const data = res.gardens
+    return data
+  }
+
+  useEffect(() => {
+    const getGardens = async () => {
+      const gardensFromServer = await fetchGardens()
+      setGardens(gardensFromServer)
     }
-  ]);
+    getGardens()
+
+  }, [])
 
   // const watch_location = async () => {
   //   if (status === 'granted') {
@@ -47,10 +51,12 @@ const MapScreen = () => {
   // }
 
   const markerPressed = (gardenId) => {
+    setSplitScreen(true)
     setGardens(prevState => prevState.map(garden => garden.id === gardenId ? { ...garden, pressed: true } : { ...garden, pressed: false }))
   }
 
   const closeById = (gardenId) => {
+    setSplitScreen(false)
     setGardens(prevState => prevState.map(garden => garden.id === gardenId ? { ...garden, pressed: false } : garden))
   }
 
@@ -87,10 +93,10 @@ const MapScreen = () => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           })
-          console.log("this is value", value);
+          // console.log("this is value", value);
           // Both resolve, but promise2 is faster
         });
-        console.log("working")
+        // console.log("working")
         // setLocation(location);
         // setmapRegion({
         //   latitude: location.coords.latitude,
@@ -119,16 +125,13 @@ const MapScreen = () => {
           </View>
           <View style={styles.buttonContainer}>
             <Button
-              // onPress={onPressHandler} 
+              onPress={() => { props.navigation.navigate('My Dogs') }}
               borderRadius={50}
               title="My Dogs"
               width={windowWidth * 0.2} />
           </View>
         </View>
         <View style={styles.wrapper}>
-          {/* <TouchableOpacity onPress={() => { console.log(location) }}>
-            <Text>pressssss</Text>
-          </TouchableOpacity> */}
           <Input
             // labelValue={name}
             // onChangeText={input => {
@@ -139,11 +142,13 @@ const MapScreen = () => {
             placeholderText="Search"
             width={windowWidth * 0.9}
           />
-          {gardens.map((garden, i) => {
+          {gardens.map((garden) => {
             if (garden.pressed) {
               return <GardenInformation
+                key={garden.id}
                 closeById={() => { closeById(garden.id) }}
                 title={garden.address}
+
                 description={garden.description}
                 amount={garden.amount}
               />
@@ -154,14 +159,6 @@ const MapScreen = () => {
             provider={PROVIDER_GOOGLE}
             Region={mapRegion}
             initialRegion={mapRegion}
-            // initialRegion={
-            //   {
-            //     latitude: 31.274989,
-            //     longitude: 34.818367,
-            //     latitudeDelta: 0.0922,
-            //     longitudeDelta: 0.0421,
-            //   }
-            // }
             followsUserLocation={myLocationButton}
             showsUserLocation={myLocationButton}
             showsMyLocationButton={myLocationButton}
@@ -169,11 +166,14 @@ const MapScreen = () => {
             toolbarEnabled={true}
             zoomEnabled={true}
             rotateEnabled={true}
-            style={styles.map}
+            style={{
+              ...styles.map,
+              height: splitScreen ? '28%' : '80%'
+            }}
           >
             {gardens.map((garden, i) => {
               return (<MapView.Marker
-                key={i}
+                key={garden.id}
                 // title={garden.address}
                 // description={garden.description}
                 coordinate={{ latitude: garden.coords.latitude, longitude: garden.coords.longitude }}
@@ -204,14 +204,10 @@ const styles = StyleSheet.create({
     // justifyContent: 'center',
   },
   map: {
-    // backgroundColor: 'green',
-    // justifyContent: 'center',
-    // flex: 1,
     alignItems: 'center',
     marginTop: 10,
     width: '90%',
     height: '80%',
-    // zIndex: 1,
   },
   lineWrapper: {
     flexDirection: 'row-reverse',

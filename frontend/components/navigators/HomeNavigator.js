@@ -3,6 +3,7 @@ import React from 'react'
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MapScreen from '../screens/MapScreen';
+import MyDogs from '../screens/MyDogs';
 
 const HomeStack = createNativeStackNavigator()
 const MyTheme = {
@@ -20,6 +21,7 @@ const HomeNavigator = () => {
         headerShown: false
       }}>
         <HomeStack.Screen name="Map" component={MapScreen} />
+        <HomeStack.Screen name="My Dogs" component={MyDogs} />
         {/* <AppStack.Screen name="Register" component={Register} /> */}
         {/* <AppStack.Screen name="ForgotPassword" component={ForgotPassword} /> */}
 

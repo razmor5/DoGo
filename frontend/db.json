@@ -1,0 +1,27 @@
+{
+  "gardens": [
+    {
+      "id": 0,
+      "address": "ד\"ר ראובן הכט 37-11, באר שבע",
+      "coords": {
+        "latitude": 31.274989,
+        "longitude": 34.818367
+      },
+      "description": "גינה יפה ומטופחת, יש ספסלים וברזייה קרובה ונקי שם מאוד",
+      "pressed": false,
+      "amount": 21
+    },
+    {
+      "id": 1,
+      "address": "Har Ramon St 32, Beersheba",
+      "coords": {
+        "latitude": 31.275883,
+        "longitude": 34.811536
+      },
+      "description": "מגודרת עם ארגז חול גדול לכלבים, יש גם מתקנים מעץ לכלב",
+      "pressed": false,
+      "amount": 16
+    }
+  ]
+    
+}
