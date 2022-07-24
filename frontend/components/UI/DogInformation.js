@@ -16,6 +16,7 @@ const DogInformation = ({ name, breed, gender }) => {
         {open &&
           <Header marginTop={1} fontSize={windowHeight * 0.035} contrast>{breed}</Header>
         }
+
       </View>
     </TouchableOpacity>
   )
