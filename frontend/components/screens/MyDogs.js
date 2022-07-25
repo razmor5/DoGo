@@ -13,17 +13,25 @@ const MyDogs = (props) => {
     email: 'razmor5@gmail.com',
     dogs: [
       {
+        id: 0,
         name: 'Bell',
         breed: 'Mix',
-        gender: 'Female',
+        gender: 'female',
       },
       {
+        id: 1,
         name: 'Toy',
         breed: 'Shitzu',
-        gender: 'Male',
+        gender: 'male',
       }
     ]
   })
+
+  const onUpdateDogs = (updatedDog) => {
+    let dogs = myDogs.dogs.map(dog => dog.id === updatedDog.id ? updatedDog : dog)
+    setMyDogs({ ...myDogs, dogs: dogs })
+
+  }
 
   return (
     <View style={styles.container}>
@@ -61,8 +69,8 @@ const MyDogs = (props) => {
         </View>
       </View>
       <ScrollView style={styles.wrapper}>
-        {myDogs.dogs.map((dog, i) =>
-          <DogInformation key={i} name={dog.name} breed={dog.breed} gender={dog.gender} />
+        {myDogs.dogs.map((dog) =>
+          <DogInformation key={dog.id} id={dog.id} onSave={onUpdateDogs} name={dog.name} breed={dog.breed} gender={dog.gender} />
         )}
       </ScrollView>
     </View >

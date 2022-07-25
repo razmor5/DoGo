@@ -1,14 +1,19 @@
 import { ScrollView, Text, StyleSheet, TouchableOpacity, I18nManager } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { windowHeight, windowWidth } from '../../Dimensions'
 import Header from './Header'
 import { createOpenLink } from 'react-native-open-maps';
 import firebase from 'firebase';
+import DogsPicker from './DogsPicker';
 
 
 const GardenInformation = ({ closeById, title, description, amount }) => {
-  // I18nManager.forceRTL(true)
-  // I18nManager.allowRTL(true)
+
+
+  const dogsAdd = () => {
+    alert("add")
+  }
+
   return (
     <ScrollView contentContainerStyle={{ alignItems: 'center' }} style={styles.container}>
       <Header fontSize={windowHeight * 0.035} contrast>{title}</Header>
@@ -26,9 +31,12 @@ const GardenInformation = ({ closeById, title, description, amount }) => {
         })}>
         <Header fontSize={windowHeight * 0.04} bold contrast>DIRECTIONS</Header>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => { firebase.auth().signOut() }}>
+      <DogsPicker />
+
+      <TouchableOpacity onPress={dogsAdd}>
         <Header fontSize={windowHeight * 0.04} bold contrast>ADD MY DOG</Header>
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.close} onPress={closeById}>
         <Header fontSize={windowHeight * 0.04} bold contrast>CLOSE</Header>
       </TouchableOpacity>

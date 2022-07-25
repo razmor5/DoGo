@@ -3,10 +3,11 @@ import { View, TextInput, StyleSheet } from 'react-native';
 import { windowHeight, windowWidth } from '../../Dimensions';
 // import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const Input = ({ width, height, contrast, fontSize, labelValue, placeholderText, iconType, children, unvalid, ...rest }) => {
+const Input = ({ marginTop, width, height, contrast, fontSize, labelValue, placeholderText, iconType, children, unvalid, ...rest }) => {
   return (
     <View style={{
       ...styles.inputContainer,
+      marginTop: marginTop || 20,
       width: width || windowWidth * 0.8,
       height: height || windowHeight / 15,
       backgroundColor: contrast ? 'black' : 'white',
@@ -37,14 +38,13 @@ const Input = ({ width, height, contrast, fontSize, labelValue, placeholderText,
 
 const styles = StyleSheet.create({
   inputContainer: {
-    marginTop: 20,
     flexDirection: 'row',
     borderWidth: 1.5,
     borderRadius: 3,
     borderColor: 'black',
   },
   input: {
-    padding: 10,
+    padding: 5,
     flex: 1,
     fontWeight: 'bold',
   },

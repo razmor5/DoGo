@@ -72,7 +72,7 @@ const MapScreen = (props) => {
         let location
         Promise.race([
           Location.getCurrentPositionAsync({}),
-          new Promise((resolve) => setTimeout(resolve, 5000))
+          new Promise((resolve) => setTimeout(resolve, 1000))
         ]).then((value) => {
           if (value === undefined) {
             location = {
