@@ -76,7 +76,11 @@ module.exports = {
           message: `[POST] - User has been created.`,
         });
       })
-      .catch((error) => res.status(500).json({ error }));
+      .catch((error) => {
+        console.log(error, error.message);
+        res.status(500).json({ error })
+      }
+      );
   },
   addDog: (req, res) => { },
   isUserExists: (req, res) => { },

@@ -29,10 +29,11 @@ const EmailAndPass = (props) => {
 
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          console.log(userCredential)
+          console.log(userCredential.user.uid)
           // this.props.navigation.navigate('Home');
         })
         .catch((error) => {
+          console.log(error.message)
           Alert.alert(
             "Oopsy",
             "Please recheck your details or join as a new member!",
@@ -140,3 +141,43 @@ const styles = StyleSheet.create({
 
 
 export default EmailAndPass
+
+// {
+//   "credential": null,
+//     "operationType": "signIn",
+//       "user": Object {
+//     "apiKey": "AIzaSyCTUua-uIQfdEOGCeySYgTVQrfxoBpmKJI",
+//       "appName": "[DEFAULT]",
+//         "authDomain": "dogo-f4209.firebaseapp.com",
+//           "createdAt": "1659079785453",
+//             "displayName": null,
+//               "email": "bar@gmail.com",
+//                 "emailVerified": false,
+//                   "isAnonymous": false,
+//                     "lastLoginAt": "1659079785453",
+//                       "multiFactor": Object {
+//       "enrolledFactors": Array[],
+//     },
+//     "phoneNumber": null,
+//       "photoURL": null,
+//         "providerData": Array[
+//           Object {
+//       "displayName": null,
+//         "email": "bar@gmail.com",
+//           "phoneNumber": null,
+//             "photoURL": null,
+//               "providerId": "password",
+//                 "uid": "bar@gmail.com",
+//       },
+//     ],
+//     "redirectEventId": null,
+//       "stsTokenManager": Object {
+//       "accessToken": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjFhZjYwYzE3ZTJkNmY4YWQ1MzRjNDAwYzVhMTZkNjc2ZmFkNzc3ZTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZG9nby1mNDIwOSIsImF1ZCI6ImRvZ28tZjQyMDkiLCJhdXRoX3RpbWUiOjE2NTkwNzk3ODUsInVzZXJfaWQiOiI3MDVoSlM0bXBJWk9mc2J2dUNNT0JjSHRaOEkyIiwic3ViIjoiNzA1aEpTNG1wSVpPZnNidnVDTU9CY0h0WjhJMiIsImlhdCI6MTY1OTA3OTc4NSwiZXhwIjoxNjU5MDgzMzg1LCJlbWFpbCI6ImJhckBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiYmFyQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.knDiILNOcM0U67s7ZtigS45QG-3OJzEDD2UPtRKx0Q3_r93ZLgPIOpBb3o67_fdQvk0qhSjBkGYJBaJcIF2ciC2aF8pT9Z79f7xCF4td24pbndTZBkpbV2EVRL0FX-EKmVA0HMwPY0kjUzLSTCu4CPPJUJBqfwuyUprNfhtSmVZOtHNzfZEs7KZMgh5lT59qcjKdceFSIpVc72i1s9Cj6B0x--uNmx6nCk4aU4-EEmgMhsEZLzj3famTjYpIK33Npdln2Go5aDJ3YMgerRmqe40vov8aY9GGcV0QOaJC-_QQ7cK-AGrjsZrw0xT57HoRQIy-QWtE4w1U8aDYV0mKjQ",
+//         "apiKey": "AIzaSyCTUua-uIQfdEOGCeySYgTVQrfxoBpmKJI",
+//           "expirationTime": 1659083385791,
+//             "refreshToken": "AOEOulZk7N_RHmXlRRKc493B_R51pcSjF547CT93Bg69_H9qlIq_zGWq05ClIkXid_RhHHHINIjDARta5WgeBbBlR_KS9aSqWXm-mRPhOgCUKoKUpBQu43xv9H7_x_4CiP3Vz-QSesyfO2XkByDs3pmTZ_tfL6nbfrtAnTLjjXE9sQItBOdi71VlnQ0EQ43r0W14GiSBNROF",
+//     },
+//     "tenantId": null,
+//       "uid": "705hJS4mpIZOfsbvuCMOBcHtZ8I2",
+//   },
+// }

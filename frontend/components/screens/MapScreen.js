@@ -11,11 +11,15 @@ import * as Location from 'expo-location';
 import CustomMarker from '../UI/CustomMarker';
 import GardenInformation from '../UI/GardenInformation';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import firebase from 'firebase';
+import url from '../../BaseURL'
+import axios from 'axios';
 
 
 const MapScreen = (props) => {
 
   const [mapRegion, setmapRegion] = useState(null);
+  const [user, setUser] = useState(null);
   const [myLocationButton, setMyLocationButton] = useState(false);
   const [status, setStatus] = useState('')
   const [location, setLocation] = useState(null);
@@ -109,6 +113,32 @@ const MapScreen = (props) => {
       }
 
     })();
+    (async () => {
+      let uid = firebase.auth().currentUser.uid
+      setTimeout(() => {
+
+        let data = JSON.stringify({
+          userID: uid,
+        })
+        let config = {
+          method: 'get',
+          url: `${url}/users/sign-in`,
+          headers: {
+            "Content-Type": "application/json"
+          },
+          data: data
+        }
+        console.log(config)
+        axios(config)
+          .then(response => {
+            console.log(response)
+            // setUser(response.data)
+          })
+          .catch(error => {
+            console.log(error, error.message)
+          })
+      }, 2000)
+    })()
     // watch_location()
   }, []);
   if (mapRegion) {
