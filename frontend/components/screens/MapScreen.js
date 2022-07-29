@@ -10,6 +10,8 @@ import * as TaskManager from 'expo-task-manager';
 import * as Location from 'expo-location';
 import CustomMarker from '../UI/CustomMarker';
 import GardenInformation from '../UI/GardenInformation';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+
 
 const MapScreen = (props) => {
 
@@ -132,7 +134,23 @@ const MapScreen = (props) => {
           </View>
         </View>
         <View style={styles.wrapper}>
-          <Input
+          <View style={styles.inputContainer}>
+            <GooglePlacesAutocomplete
+              autoFillOnNotFound
+              enablePoweredByContainer
+              fetchDetails
+              placeholder='Search'
+              onPress={(data, details = null) => {
+                // 'details' is provided when fetchDetails = true
+                console.log(data.results, details);
+              }}
+              query={{
+                key: 'AIzaSyBkpClMwCRJWIzegEw6TFY1tm9-2XN4P6E',
+                language: 'heb',
+              }}
+            />
+          </View>
+          {/* <Input
             // labelValue={name}
             // onChangeText={input => {
             //   setName(input)
@@ -141,7 +159,7 @@ const MapScreen = (props) => {
             // unvalid={!nameValid}
             placeholderText="Search"
             width={windowWidth * 0.9}
-          />
+          /> */}
           {gardens.map((garden) => {
             if (garden.pressed) {
               return <GardenInformation
@@ -215,7 +233,14 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingTop: 12,
-  }
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    marginTop: 10
+    // borderWidth: 1.5,
+    // borderRadius: 3,
+    // borderColor: 'black',
+  },
 })
 
 export default MapScreen

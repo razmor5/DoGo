@@ -8,8 +8,7 @@ import DogsPicker from './DogsPicker';
 
 
 const GardenInformation = ({ closeById, title, description, amount }) => {
-
-
+  const [canAdd, setCanAdd] = useState(false)
   const dogsAdd = () => {
     alert("add")
   }
@@ -31,10 +30,10 @@ const GardenInformation = ({ closeById, title, description, amount }) => {
         })}>
         <Header fontSize={windowHeight * 0.04} bold contrast>DIRECTIONS</Header>
       </TouchableOpacity>
-      <DogsPicker />
+      <DogsPicker setCanAdd={setCanAdd} />
 
-      <TouchableOpacity onPress={dogsAdd}>
-        <Header fontSize={windowHeight * 0.04} bold contrast>ADD MY DOG</Header>
+      <TouchableOpacity disabled={!canAdd} onPress={dogsAdd}>
+        <Header fontSize={windowHeight * 0.04} bold contrast style={{ color: canAdd ? 'black' : 'grey', }}>ADD MY DOG</Header>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.close} onPress={closeById}>

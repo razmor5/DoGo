@@ -4,7 +4,7 @@ import Header from './Header'
 import { windowHeight, windowWidth } from '../../Dimensions'
 
 
-const DogsPicker = () => {
+const DogsPicker = ({ setCanAdd }) => {
   const [myDogs, setMyDogs] = useState({
     name: 'Raz',
     email: 'razmor5@gmail.com',
@@ -25,15 +25,28 @@ const DogsPicker = () => {
       }
     ]
   })
-  const [signDogs, setSignDogs] = useState()
   const onPressHandler = (toggledDog) => {
-    let dogs = myDogs.dogs.map(dog => dog.id === toggledDog.id ? { ...toggledDog, checked: !toggledDog.checked } : dog)
+    let can = false
+    let dogs = myDogs.dogs.map(
+      dog => {
+        if (dog.id === toggledDog.id) {
+          can = can || !toggledDog.checked
+          return { ...toggledDog, checked: !toggledDog.checked }
+        }
+        else {
+          can = can || dog.checked
+          return dog
+        }
+      })
+    setCanAdd(can)
     setMyDogs({ ...myDogs, dogs: dogs })
+
   }
   return (
     <ScrollView horizontal={true}>
       {myDogs.dogs.map((dog) =>
         <TouchableOpacity
+          key={dog.id}
           onPress={() => { onPressHandler(dog) }}
           style={{
             ...styles.headerBox,
