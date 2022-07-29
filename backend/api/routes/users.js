@@ -6,15 +6,15 @@ const {
   assignUserToGarden,
   deleteUserFromGarden,
   createNewUser,
+  signInUser,
   addDog,
-  isUserExists,
   changeUserID,
   getUsersDogs,
 } = require("../controllers/users");
 
 router.post("/sign-up", createNewUser);
+router.get("/sign-in", signInUser);
 router.post("/add-dog", addDog);
-router.get("/exists", isUserExists);
 router.get("/:userID/dogs", getUsersDogs);
 router.get("/:gardenID", getUsersAtGarden);
 router.post("/:gardenID", assignUserToGarden);

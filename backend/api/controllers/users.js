@@ -59,13 +59,11 @@ module.exports = {
       .catch((error) => res.status(500).json({ error }));
   },
   createNewUser: (req, res) => {
-    const { email, name, dogsName, dogsBreed, dogsGender, userID, phone } =
-      req.body;
+    const { email, name, dogsName, dogsBreed, dogsGender, userID } = req.body;
     const dog = { id: 0, dogsName, dogsBreed, dogsGender, gardenID: -1 };
     const user = new User({
       id: userID,
       email,
-      phone,
       name,
       dogs: dog,
     });
@@ -78,8 +76,19 @@ module.exports = {
       })
       .catch((error) => res.status(500).json({ error }));
   },
-  addDog: (req, res) => { },
-  isUserExists: (req, res) => { },
+  signInUser: (req, res) => {
+    const { userID } = req.body;
+    console.log("BODY:", req.body);
+    User.findOne({ id: userID })
+      .then((user) =>
+        res.status(200).json({
+          message: `[GET] - Logged in to user ${user.name}`,
+          user,
+        })
+      )
+      .catch((error) => res.status(500).json({ error }));
+  },
+  addDog: (req, res) => {},
   changeUserID: (req, res) => {
     const { phone, newID } = req.body;
     User.updateOne({ phone }, { $set: { id: newID } })
@@ -106,5 +115,4 @@ module.exports = {
       })
       .catch((error) => res.status(500).json({ error }));
   },
-  login: (req, res) => { },
 };
