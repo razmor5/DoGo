@@ -1,10 +1,12 @@
-import { View, Text, StyleSheet, Picker, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import { windowHeight, windowWidth } from '../../Dimensions'
 import Header from '../UI/Header';
 import Input from '../UI/Input'
 import Button from '../UI/Button'
 import firebase from 'firebase';
+import url from '../../BaseURL'
+import axios from 'axios';
 
 const PersonalInformationScreen = ({ route }) => {
   const [name, setName] = useState("")
@@ -36,13 +38,41 @@ const PersonalInformationScreen = ({ route }) => {
     if (valid) {
       firebase.auth().createUserWithEmailAndPassword(route.params.email, route.params.password)
         .then((userCredential) => {
-          console.log(userCredential)
+          let data = JSON.stringify({
+            email: route.params.email,
+            name: name,
+            dogsName: dogName,
+            dogsBreed: dogBreed,
+            dogsGender: gender,
+            userID: userCredential.user.uid
+          })
+          let config =
+          {
+            method: "post",
+            url: `${url}/users/sign-up`,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            data: data
+          }
+          console.log(config);
+          axios(config)
+            .then((response) => { console.log("success:", response) })
+            .catch((error) => { console.log("error:", error.message) })
+          // console.log(userCredential.user.uid)
           //TODO: dispatch the userCredential.user.uid to mongo with all details needed
         })
         .catch((error) => {
           Alert.alert(
             "Something Went Wrong...",
             error.message,
+            [
+              {
+                text: "OK",
+                onPress: () => props.navigation.pop(),
+                style: "cancel"
+              },
+            ]
           )
         })
       console.log(route.params)
@@ -85,21 +115,21 @@ const PersonalInformationScreen = ({ route }) => {
         />
         <View style={styles.lineWrapper}>
           <Button
-            contrast={gender === "male"}
+            contrast={gender === "M"}
             title="Male"
             width={windowWidth * 0.4}
             onPress={() => {
-              setGender("male")
+              setGender("M")
               setGenderValid(true)
             }}
             unvalid={!genderValid}
           />
           <Button
-            contrast={gender === "female"}
+            contrast={gender === "F"}
             title="Female"
             width={windowWidth * 0.4}
             onPress={() => {
-              setGender("female")
+              setGender("F")
               setGenderValid(true)
             }}
             unvalid={!genderValid}
