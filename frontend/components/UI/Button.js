@@ -2,7 +2,7 @@ import { Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from 'react'
 import { windowWidth, windowHeight } from '../../Dimensions'
 
-const Button = ({ marginTop, title, width, height, contrast, fontSize, unvalid, borderRadius, ...rest }) => {
+const Button = ({ marginTop, title, width, height, contrast, fontSize, unvalid, style, borderRadius, ...rest }) => {
   return (
     <TouchableOpacity style={{
       ...styles.buttonContainer,
@@ -12,7 +12,8 @@ const Button = ({ marginTop, title, width, height, contrast, fontSize, unvalid, 
       backgroundColor: contrast ? 'black' : 'white',
       borderWidth: unvalid ? 2 : 1.5,
       borderColor: unvalid ? 'red' : 'black',
-      borderRadius: borderRadius || 3
+      borderRadius: borderRadius || 3,
+      ...style
     }} {...rest}>
       <Text style={{
         ...styles.buttonText,

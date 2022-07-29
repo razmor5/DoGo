@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, TouchableOpacity, Alert, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
 import Header from './Header'
 import { windowHeight, windowWidth } from '../../Dimensions'
@@ -6,7 +6,7 @@ import Input from './Input'
 import Button from './Button'
 
 
-const DogInformation = ({ name, breed, gender, onSave, id }) => {
+const DogInformation = ({ name, breed, gender, onSave, removeDog, id }) => {
   const [open, setOpen] = useState(false)
   const [edit, setEdit] = useState(false)
   const [dogGender, setDogGender] = useState(gender)
@@ -16,18 +16,41 @@ const DogInformation = ({ name, breed, gender, onSave, id }) => {
   const onSaveHandler = () => {
     onSave({
       id: id,
-      name: dogName,
-      breed: dogBreed,
-      gender: dogGender
+      dogsName: dogName,
+      dogsBreed: dogBreed,
+      dogsGender: dogGender
     })
     setEdit(false)
+  }
+
+  const onDeleteHandler = () => {
+    Alert.alert(
+      "Are You Sure?",
+      "After Deleting Your Dog The Data Will Lost!",
+      [
+        {
+          text: "Cancel",
+          onPress: () => { console.log("Cancel Pressed") },
+          style: "cancel"
+        },
+        {
+          text: "Delete",
+          onPress: () => {
+
+            removeDog(id, name)
+            setOpen(false)
+          }
+        }
+      ]
+    )
   }
 
   return (
     <TouchableOpacity disabled={open} onPress={() => { setOpen(prev => !prev) }} >
       <View style={{
         ...styles.container,
-        borderColor: gender === 'male' ? 'rgb(0,168,243)' : 'rgb(255,174,200)',
+        borderColor: gender === 'M' ? 'rgb(0,168,243)' : 'rgb(255,174,200)',
+        backgroundColor: gender === 'M' ? 'rgba(0,168,243, 0.2)' : 'rgba(255,174,200, 0.2)',
       }}>
         <View style={styles.lineWrapper}>
           <View style={styles.colWrapper}>
@@ -71,23 +94,23 @@ const DogInformation = ({ name, breed, gender, onSave, id }) => {
                 {edit &&
                   <View style={styles.lineWrapper}>
                     <Button
-                      contrast={dogGender === "male"}
+                      contrast={dogGender === "M"}
                       title="Male"
                       width={windowWidth * 0.15}
                       height={windowHeight * 0.04}
                       marginTop={1}
                       onPress={() => {
-                        setDogGender("male")
+                        setDogGender("M")
                       }}
                     />
                     <Button
-                      contrast={dogGender === "female"}
+                      contrast={dogGender === "F"}
                       title="Female"
                       width={windowWidth * 0.15}
                       height={windowHeight * 0.04}
                       marginTop={1}
                       onPress={() => {
-                        setDogGender("female")
+                        setDogGender("F")
                       }}
                     />
                   </View>
@@ -98,14 +121,17 @@ const DogInformation = ({ name, breed, gender, onSave, id }) => {
 
           {open &&
             <View>
-              {edit ?
+              {/* {edit ?
                 <TouchableOpacity onPress={onSaveHandler}>
                   <Header marginTop={1} fontSize={windowHeight * 0.04} contrast>Save</Header>
                 </TouchableOpacity> :
                 <TouchableOpacity onPress={() => { setEdit(true) }}>
                   <Header marginTop={1} fontSize={windowHeight * 0.04} contrast>Edit</Header>
                 </TouchableOpacity>
-              }
+              } */}
+              <TouchableOpacity onPress={onDeleteHandler}>
+                <Header marginTop={1} bold style={{ color: 'red' }} fontSize={windowHeight * 0.025} contrast>Remove</Header>
+              </TouchableOpacity>
             </View>
           }
           {open &&
@@ -120,7 +146,7 @@ const DogInformation = ({ name, breed, gender, onSave, id }) => {
               }
               setEdit(false)
             }}>
-              <Header marginTop={1} fontSize={windowHeight * 0.04} contrast>{`${edit ? "Cancel" : "Close"}`}</Header>
+              <Header marginTop={1} fontSize={windowHeight * 0.025} contrast>{`${edit ? "Cancel" : "Close"}`}</Header>
             </TouchableOpacity>
           }
         </View>
