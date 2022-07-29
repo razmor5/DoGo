@@ -25,15 +25,24 @@ module.exports = {
         console.log(usr);
         let list = usr.dogs.filter((dog) => dogs.includes(dog.id));
         let newList = list.map((item) => {
-          item.gardenID = gardenID;
-          return { userID: usr.id, name: usr.name, dog: item };
+          return {
+            userID: usr.id,
+            name: usr.name,
+            dog: { ...item, gardenID: gardenID },
+          };
         });
-        Garden.findOne({ id: gardenID }).then((garden) => {
-          garden.users = [...garden.users, ...newList];
-          garden.save().then(() => {
-            console.log(garden.users);
-            res.status(200).json({
-              message: `[POST] - User has been assigned to the garden ${gardenID} with his dogs: ${dogs}`,
+        usr.dogs = usr.dogs.map((dog) =>
+          dogs.includes(dog.id) ? { ...dog, gardenID } : dog
+        );
+        console.log(usr.dogs);
+
+        usr.save().then(() => {
+          Garden.findOne({ id: gardenID }).then((garden) => {
+            garden.users = [...garden.users, ...newList];
+            garden.save().then(() => {
+              res.status(200).json({
+                message: `[POST] - User has been assigned to the garden ${gardenID} with his dogs: ${dogs}`,
+              });
             });
           });
         });
@@ -42,12 +51,12 @@ module.exports = {
   },
   //DONE
   deleteUserFromGarden: (req, res) => {
-    const { userID } = req.body;
+    const { userID, dogs } = req.body;
     const gardenID = req.params.gardenID;
     Garden.findOne({ id: gardenID })
       .then((garden) => {
         let newUsersList = garden.users.filter(
-          (user) => user.userID !== userID
+          (user) => user.userID !== userID || !dogs.includes(user.dog.id)
         );
         garden.users = newUsersList;
         garden.save().then(() => {
@@ -56,7 +65,10 @@ module.exports = {
           });
         });
       })
-      .catch((error) => res.status(500).json({ error }));
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json({ error });
+      });
   },
   createNewUser: (req, res) => {
     const { email, name, dogsName, dogsBreed, dogsGender, userID } = req.body;
@@ -76,13 +88,11 @@ module.exports = {
       })
       .catch((error) => {
         console.log(error, error.message);
-        res.status(500).json({ error })
-      }
-      );
+        res.status(500).json({ error });
+      });
   },
   signInUser: (req, res) => {
     const { userID } = req.body;
-    console.log("BODY:", req.body);
     User.findOne({ id: userID })
       .then((user) =>
         res.status(200).json({
@@ -92,7 +102,49 @@ module.exports = {
       )
       .catch((error) => res.status(500).json({ error }));
   },
-  addDog: (req, res) => {},
+  addDog: (req, res) => {
+    const { userID, dogsName, dogsBreed, dogsGender } = req.body;
+    User.findOne({ id: userID })
+      .then((user) => {
+        console.log(user);
+        const newID = user.dogs[user.dogs.length - 1].id + 1;
+        const dog = {
+          id: newID,
+          dogsName,
+          dogsBreed,
+          dogsGender,
+          gardenID: -1,
+        };
+        user.dogs = [...user.dogs, dog];
+        console.log(user.dogs);
+        user.save().then(() => {
+          res.status(200).json({
+            message: `[POST] - The dog ${dog.dogsName} has been added to user ${user.name}`,
+            user,
+          });
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({ error });
+      });
+  },
+  deleteDog: (req, res) => {
+    const { userID, dogsID, dogsName } = req.body;
+    User.findOne({ id: userID })
+      .then((user) => {
+        user.dogs = user.dogs.filter((dog) => dog.id !== dogsID);
+        user.save().then(() => {
+          res.status(200).json({
+            message: `[POST] - The dog ${dogsName} has been removed from user ${user.name}`,
+            user,
+          });
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({ error });
+      });
+  },
+  //NOT NEEDED:
   changeUserID: (req, res) => {
     const { phone, newID } = req.body;
     User.updateOne({ phone }, { $set: { id: newID } })
