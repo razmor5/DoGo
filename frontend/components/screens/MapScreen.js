@@ -34,8 +34,14 @@ const MapScreen = (props) => {
 
   useEffect(() => {
     const getGardens = async () => {
-      const gardensFromServer = await fetchGardens()
-      setGardens(gardensFromServer)
+      axios.get(`${url}/gardens`)
+        .then(response => {
+          console.log("maps", response.data.gardens)
+          setGardens(response.data.gardens)
+        }
+        )
+        .catch(err => console.log("mapsError", err.message))
+      // const gardensFromServer = await fetchGardens()
     }
     getGardens()
 
@@ -58,12 +64,18 @@ const MapScreen = (props) => {
 
   const markerPressed = (gardenId) => {
     setSplitScreen(true)
-    setGardens(prevState => prevState.map(garden => garden.id === gardenId ? { ...garden, pressed: true } : { ...garden, pressed: false }))
+    setGardens(prevState => prevState.map(garden => garden._id === gardenId ? { ...garden, pressed: true } : { ...garden, pressed: false }))
   }
 
   const closeById = (gardenId) => {
     setSplitScreen(false)
-    setGardens(prevState => prevState.map(garden => garden.id === gardenId ? { ...garden, pressed: false } : garden))
+    setGardens(prevState => prevState.map(garden => garden._id === gardenId ? { ...garden, pressed: false } : garden))
+  }
+
+  const closeAllGardens = () => {
+    setSplitScreen(false)
+    setGardens(prevState => prevState.map(garden => { return { ...garden, pressed: false } }))
+
   }
 
   useEffect(() => {
@@ -118,21 +130,43 @@ const MapScreen = (props) => {
       setTimeout(() => {
 
         let data = JSON.stringify({
-          userID: uid,
+          userID: "userCredential.user.uid",
         })
-        let config = {
-          method: 'get',
+        let config =
+        {
+          method: 'post',
           url: `${url}/users/sign-in`,
           headers: {
             "Content-Type": "application/json"
           },
           data: data
         }
-        console.log(config)
+        // let config =
+        // {
+        //   method: "post",
+        //   url: `${url}/users/sign-up`,
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   data: JSON.stringify({
+        //     email: "eeeee@j.com",
+        //     name: "name",
+        //     dogsName: "dogName",
+        //     dogsBreed: "dogBreed",
+        //     dogsGender: "gender",
+        //     userID: "userCredential.user.uid"
+        //   })
+        // }
+        // console.log(config)
         axios(config)
           .then(response => {
-            console.log(response)
-            // setUser(response.data)
+            // console.log(response.data)
+            setUser({
+              name: response.data.user.name,
+              id: response.data.user.id,
+              email: response.data.user.email,
+              dogs: response.data.user.dogs
+            })
           })
           .catch(error => {
             console.log(error, error.message)
@@ -141,7 +175,7 @@ const MapScreen = (props) => {
     })()
     // watch_location()
   }, []);
-  if (mapRegion) {
+  if (mapRegion && user) {
 
     return (
       <View style={styles.container}>
@@ -157,7 +191,10 @@ const MapScreen = (props) => {
           </View>
           <View style={styles.buttonContainer}>
             <Button
-              onPress={() => { props.navigation.navigate('My Dogs') }}
+              onPress={() => {
+                closeAllGardens()
+                props.navigation.navigate('My Dogs', { user: user, setUser: setUser })
+              }}
               borderRadius={50}
               title="My Dogs"
               width={windowWidth * 0.2} />
@@ -193,12 +230,15 @@ const MapScreen = (props) => {
           {gardens.map((garden) => {
             if (garden.pressed) {
               return <GardenInformation
-                key={garden.id}
-                closeById={() => { closeById(garden.id) }}
-                title={garden.address}
-
-                description={garden.description}
-                amount={garden.amount}
+                closeAll={closeAllGardens}
+                user={user}
+                setUser={setUser}
+                id={garden._id}
+                key={garden._id}
+                closeById={() => { closeById(garden._id) }}
+                title={garden.name}
+                description={garden.users}
+                amount={garden.users.length}
               />
             }
           })}
@@ -221,11 +261,11 @@ const MapScreen = (props) => {
           >
             {gardens.map((garden, i) => {
               return (<MapView.Marker
-                key={garden.id}
+                key={garden._id}
                 // title={garden.address}
                 // description={garden.description}
-                coordinate={{ latitude: garden.coords.latitude, longitude: garden.coords.longitude }}
-                onPress={() => { markerPressed(garden.id) }}
+                coordinate={{ latitude: parseFloat(garden.coords.latitude), longitude: parseFloat(garden.coords.longitude) }}
+                onPress={() => { markerPressed(garden._id) }}
               // onSelect={() => { console.log("pressed") }}
               >
                 <CustomMarker />
