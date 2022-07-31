@@ -15,6 +15,28 @@ const EmailAndPass = (props) => {
   const [passwordValid, setPasswordValid] = useState(true)
   const [hidePassword, setHidePassword] = useState(true)
 
+  const onReset = () => {
+    let valid = true
+    if (email === "") {
+      valid = false
+      setEmailValid(false)
+    }
+    if (valid) {
+      firebase.auth().sendPasswordResetEmail(email)
+        .then((userCredential) => {
+          console.log(userCredential)
+          Alert.alert('Your Password Has Been Reset\nGo Check Your Email')
+          // props.navigation.replace('Login')
+          // this.props.navigation.navigate('Home');
+        })
+        .catch((error) => {
+          Alert.alert(
+            "Oopsy",
+            error.message)
+        })
+    }
+  }
+
   const onLogIn = () => {
     let valid = true
     if (email === "") {
@@ -33,22 +55,30 @@ const EmailAndPass = (props) => {
           // this.props.navigation.navigate('Home');
         })
         .catch((error) => {
-          console.log(error.message)
-          Alert.alert(
-            "Oopsy",
-            "Please recheck your details or join as a new member!",
-            [
-              {
-                text: "Register",
-                onPress: () => props.navigation.navigate('PersonalInformation', { email: email, password: password }),
-                style: "cancel"
-              },
-              {
-                text: "Try Again",
-                onPress: () => console.log("Cancel Pressed")
-              }
-            ]
-          )
+          if (error.message.includes("The password is invalid or the user does not have a password.")) {
+            console.log(error.message)
+            Alert.alert(
+              "Oopsy",
+              error.message)
+          }
+          else {
+
+            Alert.alert(
+              "Oopsy",
+              "Please recheck your details or join as a new member!",
+              [
+                {
+                  text: "Register",
+                  onPress: () => props.navigation.navigate('PersonalInformation', { email: email, password: password }),
+                  style: "cancel"
+                },
+                {
+                  text: "Try Again",
+                  onPress: () => console.log("Try Again Pressed")
+                }
+              ]
+            )
+          }
         })
     }
     // firebase.auth().signInAnonymously()
@@ -116,6 +146,7 @@ const EmailAndPass = (props) => {
       </Input>
       {/* </View> */}
       <Button onPress={onLogIn} title="SIGN IN/UP" width={windowWidth * 0.4} />
+      <Button onPress={onReset} contrast title="RESET PASSWORD" width={windowWidth * 0.4} />
     </View>
   )
 }

@@ -26,7 +26,7 @@ const MyDogs = (props) => {
   }
 
   const onRemoveDog = (dogID, dogName) => {
-    console.log(dogID, dogName)
+    // console.log(dogID, dogName)
     let data = JSON.stringify({
       userID: props.route.params.user.id,
       dogsName: dogName,

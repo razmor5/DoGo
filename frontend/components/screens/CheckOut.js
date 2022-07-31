@@ -13,10 +13,10 @@ const CheckOut = (props) => {
     ...props.route.params.user,
     dogs: props.route.params.user.dogs.filter(dog => dog.gardenID !== -1)
   })
-  console.log(myDogs)
+  // console.log(myDogs)
 
   const onRemoveDog = async (dogID) => {
-    console.log("TODO")
+    // console.log("TODO")
     myDogs.dogs.map(dog => {
       if (dog.id === dogID) {
         let data = JSON.stringify({
@@ -33,7 +33,6 @@ const CheckOut = (props) => {
         }
         axios(config)
           .then(response => {
-            console.log("success#################", response)
             props.route.params.setUser(prev => { return { ...prev, dogs: prev.dogs.map(dog => dog.id === dogID ? { ...dog, gardenID: -1 } : dog) } })
             setMyDogs(prev => { return { ...prev, dogs: prev.dogs.filter(dog => dog.id !== dogID) } })
             axios.get(`${url}/gardens`)
@@ -45,7 +44,7 @@ const CheckOut = (props) => {
               .catch(err => console.log("mapsError", err.message))
           })
           .catch(error => {
-            console.log("error#########################", error.message)
+            console.log("error", error.message)
           })
         // remove dog from garden
         // update dogs gardenID to -1
@@ -55,7 +54,6 @@ const CheckOut = (props) => {
   }
 
   const checkoutAll = () => {
-    console.log("TODO")
     let dogs = myDogs.dogs.slice()
     dogs.map(dog => {
       onRemoveDog(dog.id)
