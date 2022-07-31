@@ -22,7 +22,6 @@ module.exports = {
     console.log(dogs);
     User.findOne({ id: userID })
       .then((usr) => {
-        console.log(usr);
         let list = usr.dogs.filter((dog) => dogs.includes(dog.id));
         let newList = list.map((item) => {
           return {
@@ -53,15 +52,32 @@ module.exports = {
   deleteUserFromGarden: (req, res) => {
     const { userID, dogs } = req.body;
     const gardenID = req.params.gardenID;
-    Garden.findOne({ id: gardenID })
-      .then((garden) => {
-        let newUsersList = garden.users.filter(
-          (user) => user.userID !== userID || !dogs.includes(user.dog.id)
+    User.findOne({ id: userID })
+      .then((user) => {
+        let list = user.dogs.filter((dog) => dogs.includes(dog.id));
+        let newList = list.map((item) => {
+          return {
+            userID: user.id,
+            name: user.name,
+            dog: { ...item, gardenID },
+          };
+        });
+        user.dogs = user.dogs.map((dog) =>
+          dogs.includes(dog.id) ? { ...dog, gardenID: -1 } : dog
         );
-        garden.users = newUsersList;
-        garden.save().then(() => {
-          res.status(200).json({
-            message: `[DELETE] - User has been left the garden ${gardenID} with his dogs.`,
+        console.log(user.dogs);
+
+        user.save().then(() => {
+          Garden.findOne({ id: gardenID }).then((garden) => {
+            let newUsersList = garden.users.filter(
+              (user) => user.userID !== userID || !dogs.includes(user.dog.id)
+            );
+            garden.users = newUsersList;
+            garden.save().then(() => {
+              res.status(200).json({
+                message: `[DELETE] - User has been left the garden ${gardenID} with his dogs.`,
+              });
+            });
           });
         });
       })
