@@ -28,6 +28,7 @@ const MapScreen = (props) => {
   const [splitScreen, setSplitScreen] = useState(false);
   const [autocomplete, setAutocomplete] = useState(false);
   const [searchBar, setSearchBar] = useState("")
+  // firebase.auth().signOut()
 
   const fetchGardens = async () => {
     const res = require('../../db.json')
@@ -190,7 +191,7 @@ const MapScreen = (props) => {
             <Button
               onPress={() => {
                 closeAllGardens()
-                props.navigation.navigate('Check Out', { user: user, setUser: setUser })
+                props.navigation.navigate('Check Out', { user: user, setUser: setUser, setGardens: setGardens })
               }} contrast
               borderRadius={50}
               title="Check Out"
@@ -200,7 +201,7 @@ const MapScreen = (props) => {
             <Button
               onPress={() => {
                 closeAllGardens()
-                props.navigation.navigate('My Dogs', { user: user, setUser: setUser })
+                props.navigation.navigate('My Dogs', { user: user, setUser: setUser, setGardens: setGardens })
               }}
               borderRadius={50}
               title="My Dogs"

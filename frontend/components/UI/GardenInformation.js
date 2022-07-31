@@ -17,7 +17,7 @@ const GardenInformation = ({ closeById, title, setGardens, markerPressed, user, 
   // users.map(user => {
   //   console.log(user)
   // })
-  console.log("userrrrrrrsssssss:", users)
+  // console.log("userrrrrrrsssssss:", users)
   // gardens.map(garden => {
   //   if (garden._id === id) {
   //     // return {...garden, users:}
