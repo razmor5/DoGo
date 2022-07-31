@@ -7,7 +7,7 @@ module.exports = {
   getUsersAtGarden: (req, res) => {
     const gardenID = req.params.gardenID;
     let users = [];
-    Garden.findOne({ id: gardenID }).then((garden) => {
+    Garden.findOne({ _id: gardenID }).then((garden) => {
       users = [...garden.users];
       res.status(200).json({
         message: `[GET] - Users and dogs at the garden ${gardenID}.`,
@@ -19,7 +19,6 @@ module.exports = {
   assignUserToGarden: (req, res) => {
     const { userID, dogs } = req.body;
     const gardenID = req.params.gardenID;
-    console.log(dogs);
     User.findOne({ id: userID })
       .then((usr) => {
         let list = usr.dogs.filter((dog) => dogs.includes(dog.id));
@@ -33,10 +32,9 @@ module.exports = {
         usr.dogs = usr.dogs.map((dog) =>
           dogs.includes(dog.id) ? { ...dog, gardenID } : dog
         );
-        console.log(usr.dogs);
 
         usr.save().then(() => {
-          Garden.findOne({ id: gardenID }).then((garden) => {
+          Garden.findOne({ _id: gardenID }).then((garden) => {
             garden.users = [...garden.users, ...newList];
             garden.save().then(() => {
               res.status(200).json({
@@ -68,7 +66,7 @@ module.exports = {
         console.log(user.dogs);
 
         user.save().then(() => {
-          Garden.findOne({ id: gardenID }).then((garden) => {
+          Garden.findOne({ _id: gardenID }).then((garden) => {
             let newUsersList = garden.users.filter(
               (user) => user.userID !== userID || !dogs.includes(user.dog.id)
             );
