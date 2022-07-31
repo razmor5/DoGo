@@ -4,6 +4,8 @@ import { windowHeight, windowWidth } from '../../Dimensions'
 import Header from '../UI/Header'
 import Button from '../UI/Button'
 import DogInformation from '../UI/DogInformation'
+import url from '../../BaseURL'
+import axios from 'axios';
 
 
 const CheckOut = (props) => {
@@ -11,35 +13,52 @@ const CheckOut = (props) => {
     ...props.route.params.user,
     dogs: props.route.params.user.dogs.filter(dog => dog.gardenID !== -1)
   })
+  console.log(myDogs)
 
-  const onRemoveDog = (dogID) => {
+  const onRemoveDog = async (dogID) => {
     console.log("TODO")
     myDogs.dogs.map(dog => {
       if (dog.id === dogID) {
-        // let data = JSON.stringify({
-        //   userID: user.id,
-        //   dogs: myDogs.dogs.map(dog => dog.checked && dog.id)
-        // })
-        // let config = {
-        //   method: "post",
-        //   url: `${url}/users/${id}`,
-        //   headers: {
-        //     "Content-Type": "application/json"
-        //   },
-        //   data: data
-        // }
-        // axios(config)
+        let data = JSON.stringify({
+          userID: props.route.params.user.id,
+          dogs: [dogID]
+        })
+        let config = {
+          method: "delete",
+          url: `${url}/users/${dog.gardenID}`,
+          headers: {
+            "Content-Type": "application/json"
+          },
+          data: data
+        }
+        axios(config)
+          .then(response => {
+            console.log("success#################", response)
+            props.route.params.setUser(prev => { return { ...prev, dogs: prev.dogs.map(dog => dog.id === dogID ? { ...dog, gardenID: -1 } : dog) } })
+            setMyDogs(prev => { return { ...prev, dogs: prev.dogs.filter(dog => dog.id !== dogID) } })
+            axios.get(`${url}/gardens`)
+              .then(response => {
+                console.log("fetched gardens")
+                props.route.params.setGardens(response.data.gardens)
+              }
+              )
+              .catch(err => console.log("mapsError", err.message))
+          })
+          .catch(error => {
+            console.log("error#########################", error.message)
+          })
         // remove dog from garden
         // update dogs gardenID to -1
       }
     })
+
   }
 
   const checkoutAll = () => {
     console.log("TODO")
-    myDogs.dogs.map(dog => {
-      // remove dog from garden
-      // update dogs gardenID to -1
+    let dogs = myDogs.dogs.slice()
+    dogs.map(dog => {
+      onRemoveDog(dog.id)
     })
   }
 
@@ -59,13 +78,18 @@ const CheckOut = (props) => {
         {myDogs.dogs.map((dog) =>
           <DogInformation checkout key={dog.id} id={dog.id} removeDog={onRemoveDog} name={dog.dogsName} breed={dog.dogsBreed} gender={dog.dogsGender} />
         )}
-        <Button
-          onPress={checkoutAll}
-          contrast
-          borderRadius={50}
-          title="Check Out All"
-          width={"100%"}
-        />
+        {myDogs.dogs.length === 0 ?
+          <Header contrast fontSize={windowHeight * 0.05}>No Dogs To Check Out!</Header>
+          :
+          <View></View>
+          // <Button
+          //   onPress={checkoutAll}
+          //   contrast
+          //   borderRadius={50}
+          //   title="Check Out All"
+          //   width={"100%"}
+          // />
+        }
       </ScrollView>
     </View>
   )
