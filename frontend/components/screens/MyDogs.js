@@ -18,8 +18,6 @@ const MyDogs = (props) => {
   const [genderValid, setGenderValid] = useState(true)
   const [dogBreedValid, setDogBreedValid] = useState(true)
   const [dogNameValid, setDogNameValid] = useState(true)
-
-  console.log(props.route.params.user)
   const [myDogs, setMyDogs] = useState(props.route.params.user)
 
   const onUpdateDogs = (updatedDog) => {
@@ -144,10 +142,6 @@ const MyDogs = (props) => {
       </View>
       {addForm ?
         <View>
-
-
-
-
           <View style={styles.formWrapper}>
             <Input
               labelValue={dogName}
@@ -216,13 +210,6 @@ const MyDogs = (props) => {
               />
             </View>
           </View>
-
-
-
-
-
-
-
         </View> :
         <Button onPress={() => { setAddForm(true) }} contrast title={"Add Dog"} style={styles.button} />
       }
