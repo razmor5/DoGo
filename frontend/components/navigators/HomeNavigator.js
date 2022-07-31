@@ -4,6 +4,7 @@ import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MapScreen from '../screens/MapScreen';
 import MyDogs from '../screens/MyDogs';
+import CheckOut from '../screens/CheckOut';
 
 const HomeStack = createNativeStackNavigator()
 const MyTheme = {
@@ -22,6 +23,7 @@ const HomeNavigator = () => {
       }}>
         <HomeStack.Screen name="Map" component={MapScreen} />
         <HomeStack.Screen name="My Dogs" component={MyDogs} />
+        <HomeStack.Screen name="Check Out" component={CheckOut} />
         {/* <AppStack.Screen name="Register" component={Register} /> */}
         {/* <AppStack.Screen name="ForgotPassword" component={ForgotPassword} /> */}
 

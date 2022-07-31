@@ -6,7 +6,7 @@ import Input from './Input'
 import Button from './Button'
 
 
-const DogInformation = ({ name, breed, gender, onSave, removeDog, id }) => {
+const DogInformation = ({ name, breed, gender, onSave, removeDog, id, checkout }) => {
   const [open, setOpen] = useState(false)
   const [edit, setEdit] = useState(false)
   const [dogGender, setDogGender] = useState(gender)
@@ -24,25 +24,30 @@ const DogInformation = ({ name, breed, gender, onSave, removeDog, id }) => {
   }
 
   const onDeleteHandler = () => {
-    Alert.alert(
-      "Are You Sure?",
-      "After Deleting Your Dog The Data Will Lost!",
-      [
-        {
-          text: "Cancel",
-          onPress: () => { console.log("Cancel Pressed") },
-          style: "cancel"
-        },
-        {
-          text: "Delete",
-          onPress: () => {
-
-            removeDog(id, name)
-            setOpen(false)
+    if (checkout) {
+      removeDog(id)
+      setOpen(false)
+    }
+    else {
+      Alert.alert(
+        "Are You Sure?",
+        "After Deleting Your Dog The Data Will Lost!",
+        [
+          {
+            text: "Cancel",
+            onPress: () => { console.log("Cancel Pressed") },
+            style: "cancel"
+          },
+          {
+            text: "Delete",
+            onPress: () => {
+              removeDog(id, name)
+              setOpen(false)
+            }
           }
-        }
-      ]
-    )
+        ]
+      )
+    }
   }
 
   return (
@@ -130,7 +135,7 @@ const DogInformation = ({ name, breed, gender, onSave, removeDog, id }) => {
                 </TouchableOpacity>
               } */}
               <TouchableOpacity onPress={onDeleteHandler}>
-                <Header marginTop={1} bold style={{ color: 'red' }} fontSize={windowHeight * 0.025} contrast>Remove</Header>
+                <Header marginTop={1} bold style={{ color: 'red' }} fontSize={windowHeight * 0.025} contrast>{`${checkout ? "Checkout" : "Remove"}`}</Header>
               </TouchableOpacity>
             </View>
           }

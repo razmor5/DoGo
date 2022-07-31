@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Keyboard } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { windowHeight, windowWidth } from '../../Dimensions'
 import Header from '../UI/Header';
@@ -24,7 +24,10 @@ const MapScreen = (props) => {
   const [status, setStatus] = useState('')
   const [location, setLocation] = useState(null);
   const [gardens, setGardens] = useState([]);
+  const [filteredGardens, setFilteredGardens] = useState([]);
   const [splitScreen, setSplitScreen] = useState(false);
+  const [autocomplete, setAutocomplete] = useState(false);
+  const [searchBar, setSearchBar] = useState("")
 
   const fetchGardens = async () => {
     const res = require('../../db.json')
@@ -36,7 +39,7 @@ const MapScreen = (props) => {
     const getGardens = async () => {
       axios.get(`${url}/gardens`)
         .then(response => {
-          console.log("maps", response.data.gardens)
+          // console.log("maps", response.data.gardens)
           setGardens(response.data.gardens)
         }
         )
@@ -63,6 +66,8 @@ const MapScreen = (props) => {
   // }
 
   const markerPressed = (gardenId) => {
+    Keyboard.dismiss()
+    setAutocomplete(false)
     setSplitScreen(true)
     setGardens(prevState => prevState.map(garden => garden._id === gardenId ? { ...garden, pressed: true } : { ...garden, pressed: false }))
   }
@@ -130,7 +135,7 @@ const MapScreen = (props) => {
       setTimeout(() => {
 
         let data = JSON.stringify({
-          userID: "userCredential.user.uid",
+          userID: uid,
         })
         let config =
         {
@@ -160,7 +165,6 @@ const MapScreen = (props) => {
         // console.log(config)
         axios(config)
           .then(response => {
-            // console.log(response.data)
             setUser({
               name: response.data.user.name,
               id: response.data.user.id,
@@ -179,12 +183,15 @@ const MapScreen = (props) => {
 
     return (
       <View style={styles.container}>
+
         <View style={styles.lineWrapper}>
           <Header contrast fontSize={windowHeight * 0.05}>Search</Header>
           <View style={styles.buttonContainer}>
             <Button
-              // onPress={onPressHandler} 
-              contrast
+              onPress={() => {
+                closeAllGardens()
+                props.navigation.navigate('Check Out', { user: user, setUser: setUser })
+              }} contrast
               borderRadius={50}
               title="Check Out"
               width={windowWidth * 0.23} />
@@ -201,43 +208,32 @@ const MapScreen = (props) => {
           </View>
         </View>
         <View style={styles.wrapper}>
-          <View style={styles.inputContainer}>
-            <GooglePlacesAutocomplete
-              autoFillOnNotFound
-              enablePoweredByContainer
-              fetchDetails
-              placeholder='Search'
-              onPress={(data, details = null) => {
-                // 'details' is provided when fetchDetails = true
-                console.log(data.results, details);
+          {/* <View style={styles.inputContainer}>
+            <Input
+              labelValue={searchBar}
+              onChangeText={input => {
+                setSearchBar(input)
               }}
-              query={{
-                key: 'AIzaSyBkpClMwCRJWIzegEw6TFY1tm9-2XN4P6E',
-                language: 'heb',
-              }}
+              // unvalid={!nameValid}
+              placeholderText="Search"
+              width={windowWidth * 0.9}
             />
-          </View>
-          {/* <Input
-            // labelValue={name}
-            // onChangeText={input => {
-            //   setName(input)
-            //   setNameValid(true)
-            // }}
-            // unvalid={!nameValid}
-            placeholderText="Search"
-            width={windowWidth * 0.9}
-          /> */}
+          </View> */}
+
           {gardens.map((garden) => {
             if (garden.pressed) {
               return <GardenInformation
                 closeAll={closeAllGardens}
+                markerPressed={markerPressed}
                 user={user}
                 setUser={setUser}
+                // gardens={gardens}
+                setGardens={setGardens}
                 id={garden._id}
                 key={garden._id}
                 closeById={() => { closeById(garden._id) }}
                 title={garden.name}
-                description={garden.users}
+                users={garden.users}
                 amount={garden.users.length}
               />
             }
@@ -259,19 +255,81 @@ const MapScreen = (props) => {
               height: splitScreen ? '28%' : '80%'
             }}
           >
-            {gardens.map((garden, i) => {
+
+            {gardens.map((garden) => {
               return (<MapView.Marker
                 key={garden._id}
                 // title={garden.address}
                 // description={garden.description}
                 coordinate={{ latitude: parseFloat(garden.coords.latitude), longitude: parseFloat(garden.coords.longitude) }}
-                onPress={() => { markerPressed(garden._id) }}
+                onPress={() => {
+                  markerPressed(garden._id)
+                }}
               // onSelect={() => { console.log("pressed") }}
               >
                 <CustomMarker />
               </MapView.Marker>)
             })}
           </MapView>
+        </View>
+        <View style={{
+          ...styles.autocomplete,
+          // maxHeight: autocomplete ? (windowHeight * 0.075) * 3 : windowHeight * 0.075,
+          maxHeight: (windowHeight * 0.075) * 3,
+          // borderBottomWidth: 1.5,
+        }}>
+          <Input
+            labelValue={searchBar}
+            onChangeText={input => {
+              if (input.length >= 2) {
+                setAutocomplete(true)
+                setFilteredGardens(gardens.filter(garden => garden.name.includes(input)))
+              }
+              else {
+                setAutocomplete(false)
+                setFilteredGardens([])
+              }
+              setSearchBar(input)
+            }}
+            // unvalid={!nameValid}
+            placeholderText="Search"
+            width="100%"
+            containerStyle={{
+              borderWidth: 0,
+              marginTop: 0,
+              borderBottomWidth: autocomplete ? 1 : 0,
+            }}
+          />
+          {
+            autocomplete &&
+            <ScrollView>
+              {filteredGardens.map(garden =>
+                <Button
+                  onPress={() => {
+                    markerPressed(garden._id)
+                  }}
+                  // contrast
+                  key={garden._id}
+                  title={garden.name}
+                  width="100%"
+                  style={{
+                    // justifyContent: 'flex-start',
+                    alignItems: 'flex-start',
+                    marginTop: 0,
+                    borderRadius: 0,
+                    borderWidth: 0,
+                    borderBottomWidth: 1,
+                    borderColor: "rgba(50,50,50,0.3)",
+
+                  }}
+                  textStyle={{
+                    paddingRight: 10,
+                    paddingLeft: 10,
+                  }}
+                />
+              )}
+            </ScrollView>
+          }
         </View>
       </View >
     )
@@ -285,15 +343,14 @@ const styles = StyleSheet.create({
     height: windowHeight,
     width: windowWidth,
     padding: 10,
-    // justifyContent: 'center',
   },
   wrapper: {
-    alignItems: 'center'
+    alignItems: 'center',
     // justifyContent: 'center',
   },
   map: {
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: windowHeight * 0.12,
     width: '90%',
     height: '80%',
   },
@@ -311,6 +368,17 @@ const styles = StyleSheet.create({
     // borderRadius: 3,
     // borderColor: 'black',
   },
+  autocomplete: {
+    width: windowWidth * 0.9,
+    backgroundColor: 'white',
+    position: 'absolute',
+    top: (windowHeight * 0.15),
+    borderWidth: 1.5,
+    borderRadius: 3,
+    borderColor: 'black',
+    // top: 100,
+    right: (windowWidth - (windowWidth * 0.9)) / 2
+  }
 })
 
 export default MapScreen

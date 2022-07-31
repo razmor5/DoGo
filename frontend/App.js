@@ -13,6 +13,8 @@ import Loading from './components/screens/Loading';
 import HomeNavigator from './components/navigators/HomeNavigator';
 import AuthNavigator from './components/navigators/AuthNavigator';
 
+// firebase.auth().signOut()
+
 const getFonts = async () => Font.loadAsync({
   'Comfortaa-Regular': require('./assets/fonts/Comfortaa-Regular.ttf'),
   'Comfortaa-Bold': require('./assets/fonts/Comfortaa-Bold.ttf')
